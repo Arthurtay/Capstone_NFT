@@ -1,10 +1,10 @@
 # Capstone_NFT
 Capstone NFT using hardhat
 
-#Video Demo running project and Token transfer
+# Video Demo running project and Token transfer
 
 
-#Requirement
+# Requirement
 1.MetaMask browser extention
 2.npm install in  node-api-postgres folder
 3.npm install in  blockchain folder
