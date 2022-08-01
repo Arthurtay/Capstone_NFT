@@ -31,13 +31,16 @@ const Navigation = ({ web3Handler, account }) => {
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Home</Nav.Link>
-                        <Nav.Link as={Link} to="/create">Create</Nav.Link>
-                        <Nav.Link as={Link} to="/listeditems">My Listed Items</Nav.Link>
                         <Nav.Link as={Link} to="/tokens">User Account Token</Nav.Link>
+                        <Nav.Link as={Link} to="/create">HashCheck</Nav.Link>
+                        <Nav.Link as={Link} to="/listeditems">Listed Accounts </Nav.Link>
                         <Nav.Link as={Link} to="/admins">Admin</Nav.Link>
+                        {account ? (
+                            ("")
+                        ):
+                        ("")
+                        }
                     </Nav>
-
-             
 
                    
                     <Nav>

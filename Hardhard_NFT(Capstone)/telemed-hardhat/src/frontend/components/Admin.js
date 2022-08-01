@@ -11,7 +11,8 @@ import { useState,useEffect,componentDidMount } from 'react'
 import Button from '@mui/material/Button';
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
-
+import { sha256} from 'js-sha256';
+import { ethers } from "ethers";
 /*
 useEffect(() => {
     const requestOptions = {
@@ -38,7 +39,7 @@ useEffect(() => {
 
 
 export default function Admin({ user, nft,account }) {
-
+ 
   const [loading, setLoading] = useState(true)
   const [data, setData ] = useState([])
   //const [transferedItems, setTransferedItems] = useState([])
@@ -58,12 +59,14 @@ export default function Admin({ user, nft,account }) {
     
     try{
         console.log("NFT CREATING ")
+        console.log(sha256( data.Role + data.Username + data.WalletAddress ))
         console.log(data.Role)
         console.log(data.Username)
         var name = data.Username;
         var role = data.Role
+        var hash = sha256( data.Role + data.Username + data.WalletAddress )
       // store NFT meta data in IPFS
-      const result = await client.add(JSON.stringify({name, role}))
+      const result = await client.add(JSON.stringify({name, role,hash}))
        mintThenList(result,data.WalletAddress,data.id)
     } catch(error) {
       console.log("ipfs uri upload error: ", error)
@@ -99,20 +102,72 @@ export default function Admin({ user, nft,account }) {
 
     const uri = `https://ipfs.infura.io/ipfs/${result.path}`
     // mint nft 
-    await(await nft.mint(uri)).wait()
+    const start = performance.now()
+//    const estimation = await nft.estimateGas.transfer(recipient, 100);
+
+   const receipt_nft = await(await nft.mint(uri)).wait()
+   const nft_gasUsed =  BigInt(receipt_nft.cumulativeGasUsed) * BigInt(receipt_nft.effectiveGasPrice);
+   const nft_ethUsed = ethers.utils.formatEther(nft_gasUsed)
+   
     // get tokenId of new nft 
     const id = await nft.tokenCount()
-    console.log(account)
-    console.log(id)
+
 
     // approve  to spend nft
-    await(await nft.setApprovalForAll(user.address, true)).wait()
+    console.log("try again")
+    const receipt_approve = await(await nft.setApprovalForAll(user.address, true)).wait()
+    const approve_gasUsed =  BigInt(receipt_approve.cumulativeGasUsed) * BigInt(receipt_approve.effectiveGasPrice);
+    const approve_ethUsed = ethers.utils.formatEther(approve_gasUsed);
     console.log(user.address)
    // // add NFT to user contract to track the event
-   / await(await user.createAccount(nft.address, id)).wait()
-   // console.log(nft.adresss)
-    await (await user.distributeAccountToken(id,useraddress)).wait()
+
+
+   const receipt_create = await(await user.createAccount(nft.address, id)).wait()
+   const create_gasUsed =  BigInt(receipt_create.cumulativeGasUsed) * BigInt(receipt_create.effectiveGasPrice);
+   const create_ethUsed = ethers.utils.formatEther(create_gasUsed);
+
     
+    const receipt_distribute = await (await user.distributeAccountToken(id,useraddress)).wait()
+    const distribute_gasUsed =  BigInt(receipt_distribute.cumulativeGasUsed) * BigInt(receipt_distribute.effectiveGasPrice);
+    const distribute_ethUsed = ethers.utils.formatEther(distribute_gasUsed);
+
+    const duration = performance.now() - start;
+                 
+    
+
+    var test =  nft_ethUsed +  approve_ethUsed + create_ethUsed + distribute_ethUsed 
+    // nft_gasUsed  + approve_gasUsed +  create_ethUsed  + distribute_ethUsed 
+    var total_ethUsed = parseFloat(nft_ethUsed) +  parseFloat(approve_ethUsed) + parseFloat(create_ethUsed) + parseFloat(distribute_ethUsed)
+    //var total_ethUsed = ethers.utils.formatEther(total_gasUsed);
+    
+    console.log(test)
+   console.log(total_ethUsed)
+
+    console.log("Adding Log ")
+  
+    const requestOptions1 = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ duration: duration, total_gasUsed: total_ethUsed })
+    };
+    
+    fetch('/addLog', requestOptions1)
+    .then(async response => {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson && await response.json();
+
+        // check for error response
+        if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+        }
+      
+    })
+    .catch(error => {
+        // this.setState({ errorMessage: error.toString() });
+        console.error('There was an error!', error);
+    })
 
 
   }
@@ -148,7 +203,7 @@ export default function Admin({ user, nft,account }) {
               <TableCell align="left">{data.Role}</TableCell>
               <TableCell align="left">{data.WalletAddress}</TableCell>
               <TableCell align="left">
-                test
+                {String(data.Minted)}
               </TableCell>
               <TableCell align="left"> 
               <Button   onClick={() => {

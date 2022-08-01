@@ -48,16 +48,32 @@ const addUser = (request, response) => {
   const {
       name,
       role,
-      walletaddress
+      walletaddress,
+      minted,
   } = request.body
 
-  pool.query('INSERT INTO "TeleMed"."UserAccount" ("Username", "Role", "WalletAddress") VALUES ($1, $2, $3)', [name, role, walletaddress], (error2, results2) => {
+  pool.query('INSERT INTO "TeleMed"."UserAccount" ("Username", "Role", "WalletAddress","Minted") VALUES ($1, $2, $3,$4)', [name, role, walletaddress,minted], (error2, results2) => {
     if (error2) {
         throw error2
     }
     response.status(201).send(`User added!`)
   })
 }
+
+const addLog = (request, response) => {
+  const {
+    duration,
+    total_gasUsed 
+  } = request.body
+
+  pool.query('INSERT INTO "TeleMed"."Transaction" ("Latency", "Eth_used") VALUES ($1, $2)', [duration,total_gasUsed ], (error2, results2) => {
+    if (error2) {
+        throw error2
+    }
+    response.status(201).send(`Log added!`)
+  })
+}
+
 
 const deleteAll = (request, response) => {
   const {
@@ -76,5 +92,6 @@ const deleteAll = (request, response) => {
   module.exports = {
     getUsers,
     addUser,
-    updateUser
+    updateUser,
+    addLog
   }

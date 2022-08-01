@@ -34,6 +34,7 @@ function App() {
     // Get provider from Metamask
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     // Set signer
+
     const signer = provider.getSigner()
 
     window.ethereum.on('chainChanged', (chainId) => {

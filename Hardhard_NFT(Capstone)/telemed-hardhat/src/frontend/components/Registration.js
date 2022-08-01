@@ -74,7 +74,7 @@ const Registration = ({ account , handleClose }) => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, role:role , walletaddress:walletaddress })
+      body: JSON.stringify({ name: name, role:role , walletaddress:walletaddress , minted:false})
     };
     
     fetch('/addUser', requestOptions)

@@ -24,6 +24,7 @@ app.get("/api", (req, res) => {
 app.get('/users', db.getUsers)
 app.post('/addUser', db.addUser)
 app.post('/updateUser',db.updateUser)
+app.post('/addLog',db.addLog)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

@@ -90,7 +90,7 @@ export default function MyListedItems({ user, nft, account }) {
         </div>
         : (
           <main style={{ padding: "1rem 0" }}>
-            <h2>No listed assets</h2>
+            <h2>No Accounts Listed</h2>
           </main>
         )}
     </div>

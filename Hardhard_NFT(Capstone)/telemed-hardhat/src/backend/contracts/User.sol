@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "hardhat/console.sol";
 
-contract User is ReentrancyGuard  {
+contract User is AccessControl  {
 
     // Variables
     uint public itemCount; 
@@ -71,13 +71,15 @@ contract User is ReentrancyGuard  {
 
     function distributeAccountToken(uint _itemId , address useraddress) public {
       
+
          console.log("this is distribute account");
+         console.log(useraddress);
      //   address _toUser =  address(useraddress);  
         Item storage item = items[_itemId];
-        require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
-        require(!item.transfered, "item has already been transfered");
+     //   require(_itemId > 0 && _itemId <= itemCount, "item doesn't exist");
+     //   require(!item.transfered, "item has already been transfered");
   
-        // update item to sold
+        
         item.transfered = true;
         /*
         Transfers a specific NFT (tokenId) from one account (from) to another (to).

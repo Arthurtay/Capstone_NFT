@@ -1,20 +1,24 @@
 import { useState } from 'react'
-import { Row, Form, Button } from 'react-bootstrap'
+import { Row, Form, Button ,Card } from 'react-bootstrap'
 // create an instance of the HTTP API client
 import { create as ipfsHttpClient } from 'ipfs-http-client'
+import { sha256 } from 'js-sha256'
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 const Create = ({  user, nft }) => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [wallet_address, setWalletAddress] = useState('')
+  const [hash,setHash] =  useState('')
 
   const createNFT = async () => {
     //Ensure Fields are not empty
     if (!name || !description) return
     try{
+      setHash(sha256(description + name + wallet_address))
       // store NFT meta data in IPFS
-      const result = await client.add(JSON.stringify({name, description}))
-      mintThenList(result)
+     // const result = await client.add(JSON.stringify({name, description}))
+     // mintThenList(result)
     } catch(error) {
       console.log("ipfs uri upload error: ", error)
     }
@@ -41,12 +45,21 @@ const Create = ({  user, nft }) => {
             <Row className="g-4">
               <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" />
               <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" />
+              <Form.Control onChange={(e) => setWalletAddress(e.target.value)} size="lg" required as="textarea" placeholder="WalletAddress" />
               <div className="d-grid px-0">
                 <Button onClick={createNFT} variant="primary" size="lg">
-                  Create & List NFT!
+                  Generate Hash
                 </Button>
               </div>
+              <div className="d-grid px-0">
+                  
+              <Card>
+                  <Card.Img variant="top"  />
+                  <Card.Footer>Hash: {hash} </Card.Footer>
+                </Card>
+              </div>
             </Row>
+            
           </div>
         </main>
       </div>

@@ -18,11 +18,13 @@ export default function MyToken({ user, nft, account }) {
       // use uri to fetch the nft metadata stored on ipfs 
       const response = await fetch(uri)
       const metadata = await response.json()
+      console.log(metadata)
       // define listed item object
       let Item = {
         itemId: i.itemId,
         name: metadata.name,
-        description: metadata.description,
+        role: metadata.role,
+        hash: metadata.hash
       }
 
       return Item
@@ -53,7 +55,10 @@ export default function MyToken({ user, nft, account }) {
               <Col key={idx} className="overflow-hidden">
                 <Card>
                   <Card.Img variant="top"  />
-                  <Card.Footer>{item.name} </Card.Footer>
+                  <Card.Footer>Name: {item.name} </Card.Footer>
+                  <Card.Footer>Role: {item.role} </Card.Footer>
+                  <Card.Footer>Hash: {item.hash} </Card.Footer>
+
                 </Card>
               </Col>
             ))}
