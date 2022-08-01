@@ -25,5 +25,6 @@ Open a 3rd Terminal <br/>
 Migrate and compile smart contracts <br/>
 3.cd telemed-hardhat <br/>
 4.npx hardhat run src/backend/scripts/deploy.js --network localhost <br/>
+
 Launch Frontend <br/>
 5.npm run start <br/>
