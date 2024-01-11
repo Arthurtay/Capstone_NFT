@@ -1,5 +1,5 @@
 # Capstone_NFT
-Capstone NFT using hardhat
+Capstone NFT using react,nodejs,postgresql and hardhat
 
 # Video Demo running project and Token transfer
 https://youtu.be/uhs9jGADnTo
